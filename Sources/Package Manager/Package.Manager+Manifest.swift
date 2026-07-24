@@ -1,49 +1,23 @@
 private import JSON
-private import Process
 public import SPM_Standard
 
 extension Package.Manager {
     /// Evaluates `swift package dump-package` at a package directory.
+    ///
+    /// Reads only `name`, `toolsVersion`, and `dependencies`. Callers needing
+    /// products, targets, platforms, traits, the dependency-product back-fill,
+    /// or an honest source for mirror-substituted dependencies should use
+    /// ``evaluation(at:)`` instead.
+    ///
+    /// The SwiftPM invocation and JSON parsing are shared with
+    /// ``evaluation(at:)`` via ``dump(at:)``; this operation's observable
+    /// behaviour is unchanged by that sharing.
     public func manifest(at directory: Swift.String) throws(Error) -> Package.Manifest {
-        let output: Process.Output
-        do throws(Process.Error) {
-            output = try Process.Spawn.run(
-                .init(
-                    executable: executable,
-                    arguments: executable == "/usr/bin/env"
-                        ? ["swift", "package", "dump-package"]
-                        : ["package", "dump-package"],
-                    stdout: .pipe,
-                    stderr: .pipe,
-                    workingDirectory: directory
-                )
-            )
-        } catch {
-            throw .execution
-        }
-
-        guard output.status == .exited(code: 0) else {
-            throw .command(
-                termination: termination(output.status),
-                stderr: output.stderr ?? []
-            )
-        }
-        guard let bytes = output.stdout else {
-            throw .output
-        }
-
+        let json = try dump(at: directory)
         do throws(JSON.Error) {
-            return try decode(JSON.parse(Swift.String(decoding: bytes, as: UTF8.self)))
+            return try decode(json)
         } catch {
             throw .manifest
-        }
-    }
-
-    private func termination(_ status: Process.Status) -> Termination {
-        switch status {
-        case let .exited(code): .exited(code: code)
-        case let .signaled(signal): .signaled(signal: signal)
-        case let .stopped(signal): .stopped(signal: signal)
         }
     }
 
