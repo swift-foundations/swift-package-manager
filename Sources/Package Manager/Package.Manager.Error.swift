@@ -23,5 +23,19 @@ extension Package.Manager {
         /// differently on them, and splitting the enum for wording alone would
         /// break every existing switch for no behavioural gain.
         case manifest
+
+        /// SwiftPM's resolved state could not be read or interpreted.
+        ///
+        /// Covers an absent or unreadable state file, content that is not
+        /// well-formed JSON, and well-formed JSON that does not match the
+        /// expected shape — including a schema version this package has not
+        /// been verified against.
+        ///
+        /// Kept separate from ``manifest`` because the two describe different
+        /// sources. `manifest` reports on what an invoked SwiftPM printed;
+        /// this reports on a file SwiftPM wrote earlier. A caller finding
+        /// resolved state absent may reasonably resolve and retry, which is not
+        /// a sensible response to a manifest that will not evaluate.
+        case state
     }
 }
