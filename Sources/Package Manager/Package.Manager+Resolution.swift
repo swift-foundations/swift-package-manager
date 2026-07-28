@@ -34,7 +34,9 @@ extension Package.Manager {
         }
 
         let bytes: [Byte]
-        do throws(File.System.Read.Full.Error) {
+        // The closure is non-throwing, so `E` infers as `Never` and the
+        // closure arm of the thrown `Either` is statically uninhabited.
+        do throws(Either<File.System.Read.Full.Error, Never>) {
             bytes = try File(location).read.full { span in
                 var storage = [Byte]()
                 storage.reserveCapacity(span.count)
