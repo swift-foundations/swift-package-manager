@@ -60,7 +60,12 @@ extension Package.Manager {
         }
     }
 
-    private func termination(_ status: Process.Status) -> Termination {
+    /// Maps a spawn status onto this package's own termination model.
+    ///
+    /// `internal` rather than `private` so the state-changing operations in
+    /// `Package.Manager+Edit.swift` report failures in the same shape as the
+    /// reading operations here. Two mappings would be two chances to drift.
+    internal func termination(_ status: Process.Status) -> Termination {
         switch status {
         case .exited(let code): .exited(code: code)
         case .signaled(let signal): .signaled(signal: signal)

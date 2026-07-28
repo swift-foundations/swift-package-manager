@@ -37,5 +37,24 @@ extension Package.Manager {
         /// resolved state absent may reasonably resolve and retry, which is not
         /// a sensible response to a manifest that will not evaluate.
         case state
+
+        /// Another process holds SwiftPM's exclusive build lock for this
+        /// package, and the wait exceeded the caller's deadline.
+        ///
+        /// **Named rather than reported as a generic timeout**, because the
+        /// cause is actionable and the generic form is not: a caller can wait
+        /// for the other build, choose a different package, or tell a developer
+        /// exactly what to stop. SwiftPM itself never produces this — left to
+        /// its own devices it waits forever — so this case exists to convert a
+        /// silent hang into something reportable.
+        case locked(directory: Swift.String)
+
+        /// SwiftPM exceeded the caller's deadline without evidence that it was
+        /// waiting on a build lock.
+        ///
+        /// Distinct from ``locked(directory:)`` deliberately. Attributing every
+        /// slow run to lock contention would be a guess presented as a
+        /// diagnosis; this says only what is known — it did not finish in time.
+        case timedOut(directory: Swift.String)
     }
 }
