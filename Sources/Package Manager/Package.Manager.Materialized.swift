@@ -55,6 +55,7 @@ extension Package.Manager.Materialized {
         switch dependency.state {
         case .sourceControlCheckout:
             "\(scratch ?? "\(directory)/.build")/checkouts/\(dependency.subpath)"
+
         case .fileSystem(let path), .edited(let path, _):
             path
         }

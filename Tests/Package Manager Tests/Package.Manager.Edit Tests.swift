@@ -1,5 +1,6 @@
-@testable import Package_Manager
 import Testing
+
+@testable import Package_Manager
 
 // These tests deliberately do **not** invoke `swift package edit` against a real
 // package. Doing so would take SwiftPM's exclusive lock on that package's
