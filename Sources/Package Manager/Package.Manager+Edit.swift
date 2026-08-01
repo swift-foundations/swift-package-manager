@@ -169,14 +169,8 @@ extension Package.Manager {
     internal static func waiting(onLockIn stderr: [UInt8]) -> Swift.Bool {
         let needle = Array("is already running using".utf8)
         guard stderr.count >= needle.count else { return false }
-        for start in 0...(stderr.count - needle.count) {
-            var matched = true
-            for offset in needle.indices where stderr[start + offset] != needle[offset] {
-                matched = false
-                break
-            }
-            if matched { return true }
+        return (0...(stderr.count - needle.count)).contains { start in
+            needle.indices.allSatisfy { offset in stderr[start + offset] == needle[offset] }
         }
-        return false
     }
 }

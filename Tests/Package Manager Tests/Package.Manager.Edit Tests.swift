@@ -9,11 +9,15 @@ import Testing
 // here is the classification logic, which is where the judgement lives; the
 // invocation itself is the same spawn path `dump(at:)` already exercises.
 
-@Suite struct `Edit lock classification` {}
+private func bytes(_ text: Swift.String) -> [UInt8] { Array(text.utf8) }
 
-extension `Edit lock classification` {
-    private func bytes(_ text: Swift.String) -> [UInt8] { Array(text.utf8) }
+@Suite struct `Edit lock classification` {
+    @Suite struct Unit {}
+    @Suite struct `Edge Case` {}
+    @Suite struct Integration {}
+}
 
+extension `Edit lock classification`.Unit {
     @Test
     func `SwiftPM's waiting notice is recognised`() {
         // The real message, with a representative PID and path. Only the stable
@@ -37,17 +41,19 @@ extension `Edit lock classification` {
     }
 
     @Test
+    func `the notice is found when it is not at the start`() {
+        let stderr = "warning: something first\nAnother instance of SwiftPM (PID: 9) is already running using '/x/.build'"
+        #expect(Package.Manager.waiting(onLockIn: bytes(stderr)))
+    }
+}
+
+extension `Edit lock classification`.`Edge Case` {
+    @Test
     func `a stderr shorter than the needle does not overrun`() {
         // The scan indexes `stderr[start + offset]`, so a buffer shorter than
         // the needle must be rejected before the loop rather than inside it.
         #expect(!Package.Manager.waiting(onLockIn: bytes("is alr")))
         #expect(!Package.Manager.waiting(onLockIn: []))
-    }
-
-    @Test
-    func `the notice is found when it is not at the start`() {
-        let stderr = "warning: something first\nAnother instance of SwiftPM (PID: 9) is already running using '/x/.build'"
-        #expect(Package.Manager.waiting(onLockIn: bytes(stderr)))
     }
 
     @Test
