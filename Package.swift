@@ -4,7 +4,13 @@ import PackageDescription
 
 let package = Package(
     name: "swift-package-manager",
-    platforms: [.macOS(.v26)],
+    platforms: [
+        .macOS(.v26),
+        .iOS(.v26),
+        .tvOS(.v26),
+        .watchOS(.v26),
+        .visionOS(.v26)
+    ],
     products: [
         .library(name: "Package Manager", targets: ["Package Manager"])
     ],
