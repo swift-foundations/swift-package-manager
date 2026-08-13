@@ -95,6 +95,11 @@ extension Package.Manifest.Clause {
         Self.declaredPath(in: text)
     }
 
+    /// The declared branch requirement, or `nil` for every other requirement.
+    public var declaredBranch: Swift.String? {
+        Self.quoted(after: "branch:", in: text)
+    }
+
     /// The declared URL of a standalone url-form clause text.
     ///
     /// The standalone form lets a persisted clause be re-parsed without
