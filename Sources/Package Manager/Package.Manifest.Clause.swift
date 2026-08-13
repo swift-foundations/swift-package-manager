@@ -30,13 +30,27 @@ extension Package.Manifest.Clause {
     /// Every `.package(...)` clause in `source`, in source order.
     public static func all(in source: Swift.String) -> [Self] {
         let bytes = [Swift.UInt8](source.utf8)
-        let marker = [Swift.UInt8](".package(".utf8)
+        let marker = [Swift.UInt8](".package".utf8)
 
         var clauses: [Self] = []
         var index = 0
         while let start = firstIndex(of: marker, in: bytes, from: index) {
-            let openParen = start + marker.count
-            guard let close = closingParen(in: bytes, after: openParen) else {
+            var openParen = start + marker.count
+            while openParen < bytes.count,
+                bytes[openParen] == Swift.UInt8(ascii: " " as Swift.Unicode.Scalar)
+                    || bytes[openParen] == Swift.UInt8(ascii: "\t" as Swift.Unicode.Scalar)
+                    || bytes[openParen] == Swift.UInt8(ascii: "\n" as Swift.Unicode.Scalar)
+                    || bytes[openParen] == Swift.UInt8(ascii: "\r" as Swift.Unicode.Scalar)
+            {
+                openParen += 1
+            }
+            guard openParen < bytes.count,
+                bytes[openParen] == Swift.UInt8(ascii: "(" as Swift.Unicode.Scalar)
+            else {
+                index = start + marker.count
+                continue
+            }
+            guard let close = closingParen(in: bytes, after: openParen + 1) else {
                 // Unbalanced from here on; nothing further is a well-formed
                 // clause, so stop rather than ressynchronising on a guess.
                 break
@@ -79,6 +93,11 @@ extension Package.Manifest.Clause {
     /// `nil` when the clause is not path-form.
     public var declaredPath: Swift.String? {
         Self.declaredPath(in: text)
+    }
+
+    /// The declared branch requirement, or `nil` for every other requirement.
+    public var declaredBranch: Swift.String? {
+        Self.quoted(after: "branch:", in: text)
     }
 
     /// The declared URL of a standalone url-form clause text.
@@ -149,8 +168,8 @@ extension Package.Manifest.Clause {
         return Swift.String(decoding: bytes[open..<close], as: Swift.UTF8.self)
     }
 
-    /// The index of the `)` that closes the `.package(` whose `(` sits at
-    /// `start - 1`. Depth-counts parentheses and skips string-literal contents
+    /// The index of the `)` that closes the `.package` call whose `(` sits
+    /// immediately before `start`. Depth-counts parentheses and skips string-literal contents
     /// so a paren inside a quoted URL or path cannot close the clause early.
     /// `nil` when the parentheses never balance.
     private static func closingParen(in bytes: [Swift.UInt8], after start: Swift.Int) -> Swift.Int? {

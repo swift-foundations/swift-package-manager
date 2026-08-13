@@ -42,6 +42,33 @@ extension Package.Manifest.Clause.Test.Unit {
     }
 
     @Test
+    func `whitespace between package and its arguments is accepted`() {
+        let source = #"dependencies: [.package (url: "https://example.com/swift-alpha.git", branch: "main")]"#
+        #expect(Package.Manifest.Clause.all(in: source).first?.declaredURL == "https://example.com/swift-alpha.git")
+    }
+
+    @Test
+    func `source control facts include branch and exclude comments`() {
+        let source = """
+            // .package(url: "https://github.com/swift-primitives/ignored.git", branch: "feature")
+            .package(url: "https://github.com/swift-primitives/swift-alpha.git", branch: "main")
+            """
+        let facts = Package.Manifest.Dependency.SourceControl.all(
+            in: source,
+            document: "Package.swift"
+        )
+        #expect(
+            facts == [
+                .init(
+                    url: "https://github.com/swift-primitives/swift-alpha.git",
+                    branch: "main",
+                    document: "Package.swift"
+                )
+            ]
+        )
+    }
+
+    @Test
     func `url locates the clause by derived identity`() {
         let clause = Package.Manifest.Clause.url(identity: "swift-beta", in: Self.manifest)
         #expect(clause?.declaredURL == "https://github.com/foo/swift-beta.git")
