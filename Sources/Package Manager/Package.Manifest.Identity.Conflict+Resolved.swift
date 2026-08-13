@@ -9,9 +9,13 @@ extension Package.Manifest.Identity.Conflict {
         inResolved source: Swift.String,
         document: Swift.String = "Package.resolved"
     ) -> [Entry] {
-        guard let json = try? JSON.parse(source), let pins = json["pins"].array else {
+        let json: JSON
+        do throws(JSON.Error) {
+            json = try JSON.parse(source)
+        } catch {
             return []
         }
+        guard let pins = json["pins"].array else { return [] }
         return pins.compactMap { pin in
             let location = Swift.String(pin["location"])
             guard !location.isEmpty else { return nil }

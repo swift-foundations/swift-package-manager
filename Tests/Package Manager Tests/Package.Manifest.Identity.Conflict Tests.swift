@@ -15,11 +15,13 @@ extension Package.Manifest.Identity.Conflict.Test.Unit {
             Package.Manifest.Identity.Conflict.Entry(
                 url: "https://github.com/swift-standards/swift-rfc-7578.git",
                 document: "Package.swift",
-                source: .manifest),
+                source: .manifest
+            ),
             Package.Manifest.Identity.Conflict.Entry(
                 url: "https://github.com/swift-ietf/swift-rfc-7578.git",
                 document: "Package@swift-6.3.swift",
-                source: .manifest),
+                source: .manifest
+            ),
         ]
 
         let finding = Package.Manifest.Identity.Conflict.findings(in: entries).first
@@ -33,11 +35,13 @@ extension Package.Manifest.Identity.Conflict.Test.Unit {
             Package.Manifest.Identity.Conflict.Entry(
                 url: "https://github.com/swift-ietf/swift-rfc-7578.git",
                 document: "Package.swift",
-                source: .manifest),
+                source: .manifest
+            ),
             Package.Manifest.Identity.Conflict.Entry(
                 url: "https://github.com/swift-standards/swift-rfc-7578.git",
                 document: "Package.resolved",
-                source: .pin),
+                source: .pin
+            ),
         ]
 
         #expect(Package.Manifest.Identity.Conflict.findings(in: entries).first?.disposition == .stalePin)
@@ -62,11 +66,13 @@ extension Package.Manifest.Identity.Conflict.Test.`Edge Case` {
             Package.Manifest.Identity.Conflict.Entry(
                 url: "https://GitHub.com/swift-ietf/swift-rfc-7578.git/",
                 document: "Package.swift",
-                source: .manifest),
+                source: .manifest
+            ),
             Package.Manifest.Identity.Conflict.Entry(
                 url: "git@github.com:swift-ietf/swift-rfc-7578",
                 document: "Package@swift-6.3.swift",
-                source: .manifest),
+                source: .manifest
+            ),
         ]
 
         #expect(Package.Manifest.Identity.Conflict.findings(in: entries).isEmpty)
@@ -83,7 +89,8 @@ extension Package.Manifest.Identity.Conflict.Test.`Edge Case` {
 
         let entries = Package.Manifest.Identity.Conflict.entries(
             in: source,
-            document: "Package.swift")
+            document: "Package.swift"
+        )
         #expect(entries.count == 1)
         #expect(entries.first?.identity == "swift-alpha")
     }

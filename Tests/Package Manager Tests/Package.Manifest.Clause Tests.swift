@@ -55,13 +55,17 @@ extension Package.Manifest.Clause.Test.Unit {
             """
         let facts = Package.Manifest.Dependency.SourceControl.all(
             in: source,
-            document: "Package.swift")
-        #expect(facts == [
-            .init(
-                url: "https://github.com/swift-primitives/swift-alpha.git",
-                branch: "main",
-                document: "Package.swift")
-        ])
+            document: "Package.swift"
+        )
+        #expect(
+            facts == [
+                .init(
+                    url: "https://github.com/swift-primitives/swift-alpha.git",
+                    branch: "main",
+                    document: "Package.swift"
+                )
+            ]
+        )
     }
 
     @Test
