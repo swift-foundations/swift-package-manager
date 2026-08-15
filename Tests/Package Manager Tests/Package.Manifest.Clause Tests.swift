@@ -43,8 +43,12 @@ extension Package.Manifest.Clause.Test.Unit {
 
     @Test
     func `whitespace between package and its arguments is accepted`() {
-        let source = #"dependencies: [.package (url: "https://example.com/swift-alpha.git", branch: "main")]"#
-        #expect(Package.Manifest.Clause.all(in: source).first?.declaredURL == "https://example.com/swift-alpha.git")
+        let source =
+            #"dependencies: [.package (url: "https://example.com/swift-alpha.git", branch: "main")]"#
+        #expect(
+            Package.Manifest.Clause.all(in: source).first?.declaredURL
+                == "https://example.com/swift-alpha.git"
+        )
     }
 
     @Test
@@ -125,7 +129,9 @@ extension Package.Manifest.Clause.Test.`Edge Case` {
 
     @Test
     func `a url clause reports no declared path and a path clause no declared url`() {
-        let url = Package.Manifest.Clause.all(in: ".package(url: \"https://e.com/x.git\", branch: \"main\")").first
+        let url = Package.Manifest.Clause.all(
+            in: ".package(url: \"https://e.com/x.git\", branch: \"main\")"
+        ).first
         #expect(url?.declaredPath == nil)
         let path = Package.Manifest.Clause.all(in: ".package(path: \"/x\")").first
         #expect(path?.declaredURL == nil)

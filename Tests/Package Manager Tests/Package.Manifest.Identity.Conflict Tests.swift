@@ -44,12 +44,15 @@ extension Package.Manifest.Identity.Conflict.Test.Unit {
             ),
         ]
 
-        #expect(Package.Manifest.Identity.Conflict.findings(in: entries).first?.disposition == .stalePin)
+        #expect(
+            Package.Manifest.Identity.Conflict.findings(in: entries).first?.disposition == .stalePin
+        )
     }
 
     @Test
     func `resolved locations are extracted by the package manager owner`() {
-        let resolved = #"{"pins":[{"identity":"swift-rfc-7578","location":"https://github.com/swift-standards/swift-rfc-7578.git","state":{"revision":"abc","version":"1.0.0"}}],"version":2}"#
+        let resolved =
+            #"{"pins":[{"identity":"swift-rfc-7578","location":"https://github.com/swift-standards/swift-rfc-7578.git","state":{"revision":"abc","version":"1.0.0"}}],"version":2}"#
 
         let entries = Package.Manifest.Identity.Conflict.entries(inResolved: resolved)
 

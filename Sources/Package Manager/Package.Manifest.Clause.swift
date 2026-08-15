@@ -139,7 +139,8 @@ extension Package.Manifest.Clause {
         var value = url[...]
         while value.last == "/" { value = value.dropLast() }
         if value.hasSuffix(".git") { value = value.dropLast(4) }
-        let component = value.split(separator: "/").last.map(Swift.String.init) ?? Swift.String(value)
+        let component =
+            value.split(separator: "/").last.map(Swift.String.init) ?? Swift.String(value)
         return component.lowercased()
     }
 }
@@ -172,7 +173,8 @@ extension Package.Manifest.Clause {
     /// immediately before `start`. Depth-counts parentheses and skips string-literal contents
     /// so a paren inside a quoted URL or path cannot close the clause early.
     /// `nil` when the parentheses never balance.
-    private static func closingParen(in bytes: [Swift.UInt8], after start: Swift.Int) -> Swift.Int? {
+    private static func closingParen(in bytes: [Swift.UInt8], after start: Swift.Int) -> Swift.Int?
+    {
         let quote = Swift.UInt8(ascii: "\"" as Swift.Unicode.Scalar)
         let backslash = Swift.UInt8(ascii: "\\" as Swift.Unicode.Scalar)
         let open = Swift.UInt8(ascii: "(" as Swift.Unicode.Scalar)

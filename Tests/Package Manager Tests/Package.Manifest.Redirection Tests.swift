@@ -32,7 +32,10 @@ extension Package.Manifest.Redirection.Test.Unit {
             to: "/checkouts/swift-alpha"
         )
         #expect(rewrite.planned == ".package(path: \"/checkouts/swift-alpha\")")
-        #expect(rewrite.declared == ".package(url: \"https://github.com/foo/swift-alpha.git\", branch: \"main\")")
+        #expect(
+            rewrite.declared
+                == ".package(url: \"https://github.com/foo/swift-alpha.git\", branch: \"main\")"
+        )
         #expect(rewrite.source.contains(rewrite.planned))
         #expect(!rewrite.source.contains("https://github.com/foo/swift-alpha.git"))
         #expect(rewrite.source.contains("https://github.com/foo/swift-beta.git"))
@@ -76,7 +79,11 @@ extension Package.Manifest.Redirection.Test.`Edge Case` {
 
     @Test
     func `redirect refuses a dependency not declared by url`() {
-        #expect(throws: Package.Manifest.Redirection.Error.dependencyNotDeclaredByURL(identity: "swift-delta")) {
+        #expect(
+            throws: Package.Manifest.Redirection.Error.dependencyNotDeclaredByURL(
+                identity: "swift-delta"
+            )
+        ) {
             try Package.Manifest.Redirection.redirect(
                 Self.manifest,
                 dependency: "https://github.com/foo/swift-delta.git",
@@ -94,7 +101,11 @@ extension Package.Manifest.Redirection.Test.`Edge Case` {
         )
         // The original manifest never carried the planned clause — the same
         // shape a hand-edit or an earlier restore leaves behind.
-        #expect(throws: Package.Manifest.Redirection.Error.composedClauseAbsent(planned: rewrite.planned)) {
+        #expect(
+            throws: Package.Manifest.Redirection.Error.composedClauseAbsent(
+                planned: rewrite.planned
+            )
+        ) {
             try Package.Manifest.Redirection.restore(
                 Self.manifest,
                 planned: rewrite.planned,
