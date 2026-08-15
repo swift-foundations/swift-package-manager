@@ -42,7 +42,8 @@ extension `Edit lock classification`.Unit {
 
     @Test
     func `the notice is found when it is not at the start`() {
-        let stderr = "warning: something first\nAnother instance of SwiftPM (PID: 9) is already running using '/x/.build'"
+        let stderr =
+            "warning: something first\nAnother instance of SwiftPM (PID: 9) is already running using '/x/.build'"
         #expect(Package.Manager.waiting(onLockIn: bytes(stderr)))
     }
 }
@@ -61,6 +62,8 @@ extension `Edit lock classification`.`Edge Case` {
         // A partial match that restarts mid-needle would report contention on
         // text that never contained the notice.
         #expect(!Package.Manager.waiting(onLockIn: bytes("is already runnin")))
-        #expect(Package.Manager.waiting(onLockIn: bytes("is already runnin is already running using")))
+        #expect(
+            Package.Manager.waiting(onLockIn: bytes("is already runnin is already running using"))
+        )
     }
 }

@@ -15,7 +15,6 @@ extension Package.Manager {
     /// correctly but is absent is itself a finding, and merging the two would
     /// hide it.
     public struct Materialized: Swift.Sendable {
-        internal init() {}
     }
 }
 
