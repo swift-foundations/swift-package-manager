@@ -88,7 +88,8 @@ extension Package.Manager {
                 // with the host's own separator; only its component tail is
                 // asserted so this stays portable across machines and
                 // platforms.
-                let components = path
+                let components =
+                    path
                     .split(whereSeparator: { $0 == "/" || $0 == "\\" })
                     .map(Swift.String.init)
                 #expect(components.suffix(3) == ["Tests", "Fixtures", "Dependency"])
