@@ -128,9 +128,7 @@ extension Package.Manager {
             output = try Process.Spawn.run(
                 .init(
                     executable: executable,
-                    arguments: executable == "/usr/bin/env"
-                        ? ["swift"] + arguments
-                        : arguments,
+                    arguments: launcherPrefix + arguments,
                     stdout: .pipe,
                     stderr: .pipe,
                     workingDirectory: directory,

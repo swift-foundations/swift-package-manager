@@ -31,9 +31,7 @@ extension Package.Manager {
             output = try Process.Spawn.run(
                 .init(
                     executable: executable,
-                    arguments: executable == "/usr/bin/env"
-                        ? ["swift", "package", "dump-package"]
-                        : ["package", "dump-package"],
+                    arguments: launcherPrefix + ["package", "dump-package"],
                     stdout: .pipe,
                     stderr: .pipe,
                     workingDirectory: directory
