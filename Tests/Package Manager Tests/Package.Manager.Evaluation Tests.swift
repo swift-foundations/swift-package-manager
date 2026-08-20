@@ -84,9 +84,15 @@ extension Package.Manager {
                     return
                 }
                 #expect(identity == "dependency")
-                // The absolute path is machine-specific; only its tail is
-                // asserted so this stays portable.
-                #expect(path.hasSuffix("Tests/Fixtures/Dependency"))
+                // The absolute path is machine-specific and SwiftPM reports it
+                // with the host's own separator; only its component tail is
+                // asserted so this stays portable across machines and
+                // platforms.
+                let components =
+                    path
+                    .split(whereSeparator: { $0 == "/" || $0 == "\\" })
+                    .map(Swift.String.init)
+                #expect(components.suffix(3) == ["Tests", "Fixtures", "Dependency"])
             }
 
             @Test
