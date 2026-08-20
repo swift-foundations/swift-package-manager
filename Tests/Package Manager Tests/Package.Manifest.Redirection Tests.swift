@@ -11,7 +11,7 @@ extension Package.Manifest.Redirection {
 
 extension Package.Manifest.Redirection.Test.Unit {
     private static let manifest = """
-        // swift-tools-version: 6.3.3
+        // swift-tools-version: 6.4
         import PackageDescription
 
         let package = Package(
