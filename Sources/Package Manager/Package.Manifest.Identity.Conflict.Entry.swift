@@ -1,5 +1,5 @@
 extension Package.Manifest.Identity.Conflict {
-    /// One source-control location observed in a root manifest or resolved pin.
+
     public struct Entry: Swift.Sendable, Swift.Hashable {
         public let identity: Swift.String
         public let location: Swift.String

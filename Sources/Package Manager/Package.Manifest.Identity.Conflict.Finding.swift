@@ -1,5 +1,5 @@
 extension Package.Manifest.Identity.Conflict {
-    /// All distinct locations observed for one conflicting package identity.
+
     public struct Finding: Swift.Sendable, Swift.Equatable {
         public let identity: Swift.String
         public let entries: [Entry]

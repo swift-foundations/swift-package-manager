@@ -1,33 +1,17 @@
 public import SPM_Standard
 
 extension Package.Manifest {
-    /// A located `.package(...)` clause within manifest source: the exact text
-    /// it spans and the UTF-8 byte range it occupies.
-    ///
-    /// Located by paren-matching over the **raw** manifest bytes, not by
-    /// re-serialising an evaluated manifest. The reversal a redirection owes is
-    /// *byte-identical* — the declared clause must be restored verbatim — so it
-    /// has to be captured verbatim, and only the original bytes are verbatim.
-    /// String-literal contents are skipped during the scan, so a parenthesis
-    /// inside a quoted URL or path cannot close the clause early.
-    ///
-    /// The range is expressed in bytes rather than `String.Index` because every
-    /// delimiter this engine keys on — `.package(`, `(`, `)`, `"`, `\` — is
-    /// ASCII, so byte boundaries at those points never fall inside a multi-byte
-    /// UTF-8 scalar and slicing on them is exact. Working over `String.Index`
-    /// would pull in Foundation's `range(of:)`, which the layer forbids.
+
     public struct Clause: Swift.Sendable, Swift.Equatable {
-        /// The exact source text of the clause, from `.package(` to its
-        /// matching `)`, inclusive.
+
         public let text: Swift.String
 
-        /// The half-open UTF-8 byte range the clause occupies in its source.
         public let range: Swift.Range<Swift.Int>
     }
 }
 
 extension Package.Manifest.Clause {
-    /// Every `.package(...)` clause in `source`, in source order.
+
     public static func all(in source: Swift.String) -> [Self] {
         let bytes = [Swift.UInt8](source.utf8)
         let marker = [Swift.UInt8](".package".utf8)
@@ -51,8 +35,7 @@ extension Package.Manifest.Clause {
                 continue
             }
             guard let close = closingParen(in: bytes, after: openParen + 1) else {
-                // Unbalanced from here on; nothing further is a well-formed
-                // clause, so stop rather than ressynchronising on a guess.
+
                 break
             }
             let range = start..<(close + 1)
@@ -67,12 +50,6 @@ extension Package.Manifest.Clause {
         return clauses
     }
 
-    /// The url-form clause whose declared URL has package identity `identity`,
-    /// or `nil` when the source declares no such dependency by URL.
-    ///
-    /// Matched on derived identity, not on a literal URL comparison, so a
-    /// declaration that omits a trailing `.git` or differs in case still
-    /// matches — identity is exactly what SwiftPM keys a dependency on.
     public static func url(
         identity: Swift.String,
         in source: Swift.String
@@ -83,42 +60,26 @@ extension Package.Manifest.Clause {
         }
     }
 
-    /// The declared URL of a url-form clause (`.package(url: "…", …)`), or
-    /// `nil` when the clause is not url-form.
     public var declaredURL: Swift.String? {
         Self.declaredURL(in: text)
     }
 
-    /// The declared path of a path-form clause (`.package(path: "…")`), or
-    /// `nil` when the clause is not path-form.
     public var declaredPath: Swift.String? {
         Self.declaredPath(in: text)
     }
 
-    /// The declared branch requirement, or `nil` for every other requirement.
     public var declaredBranch: Swift.String? {
         Self.quoted(after: "branch:", in: text)
     }
 
-    /// The declared URL of a standalone url-form clause text.
-    ///
-    /// The standalone form lets a persisted clause be re-parsed without
-    /// re-locating it in a manifest — a restore knows the exact clause text it
-    /// stored and needs the identity it carries, not a position.
     public static func declaredURL(in text: Swift.String) -> Swift.String? {
         quoted(after: "url:", in: text)
     }
 
-    /// The declared path of a standalone path-form clause text.
     public static func declaredPath(in text: Swift.String) -> Swift.String? {
         quoted(after: "path:", in: text)
     }
 
-    /// `source` with this clause's byte span replaced by `replacement`.
-    ///
-    /// The clause carries a byte range into the exact `source` it was located
-    /// in; applying it to any other text is a programmer error the caller
-    /// prevents by re-locating against the text it edits.
     public func replacing(
         with replacement: Swift.String,
         in source: Swift.String
@@ -132,9 +93,6 @@ extension Package.Manifest.Clause {
         return Swift.String(decoding: result, as: Swift.UTF8.self)
     }
 
-    /// SwiftPM's package identity for a source-control URL: the last path
-    /// component, with a trailing slash and a trailing `.git` removed, folded
-    /// to lower case. This mirrors how SwiftPM derives identity from a git URL.
     public static func identity(ofURL url: Swift.String) -> Swift.String {
         var value = url[...]
         while value.last == "/" { value = value.dropLast() }
@@ -146,12 +104,7 @@ extension Package.Manifest.Clause {
 }
 
 extension Package.Manifest.Clause {
-    /// The first quoted string literal that follows `label` in the clause text,
-    /// or `nil` when the label or a following literal is absent.
-    ///
-    /// Escaped quotes are not interpreted: a URL or filesystem path carrying a
-    /// literal `"` is pathological here, and treating the first inner quote as
-    /// the terminator fails loudly rather than smuggling a wrong value through.
+
     private static func quoted(after label: Swift.String, in text: Swift.String) -> Swift.String? {
         let bytes = [Swift.UInt8](text.utf8)
         let needle = [Swift.UInt8](label.utf8)
@@ -169,10 +122,6 @@ extension Package.Manifest.Clause {
         return Swift.String(decoding: bytes[open..<close], as: Swift.UTF8.self)
     }
 
-    /// The index of the `)` that closes the `.package` call whose `(` sits
-    /// immediately before `start`. Depth-counts parentheses and skips string-literal contents
-    /// so a paren inside a quoted URL or path cannot close the clause early.
-    /// `nil` when the parentheses never balance.
     private static func closingParen(in bytes: [Swift.UInt8], after start: Swift.Int) -> Swift.Int?
     {
         let quote = Swift.UInt8(ascii: "\"" as Swift.Unicode.Scalar)
@@ -212,9 +161,6 @@ extension Package.Manifest.Clause {
         return nil
     }
 
-    /// The index in `haystack` at or after `from` where `needle` first occurs,
-    /// or `nil`. A plain forward scan; manifests are small and this runs a
-    /// handful of times per operation.
     private static func firstIndex(
         of needle: [Swift.UInt8],
         in haystack: [Swift.UInt8],

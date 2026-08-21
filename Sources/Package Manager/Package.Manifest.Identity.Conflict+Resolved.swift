@@ -1,10 +1,7 @@
 private import JSON
 
 extension Package.Manifest.Identity.Conflict {
-    /// Source-control locations recorded by a SwiftPM `Package.resolved` file.
-    ///
-    /// Missing, malformed, and non-string pin locations contribute no entries,
-    /// matching SwiftPM's ability to regenerate resolved state from manifests.
+
     public static func entries(
         inResolved source: Swift.String,
         document: Swift.String = "Package.resolved"

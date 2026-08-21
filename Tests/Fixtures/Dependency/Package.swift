@@ -2,9 +2,6 @@
 
 import PackageDescription
 
-// Fixture dependency for `Composed`. Two products so the back-fill assertion
-// is meaningful: `Composed` depends on exactly one of them, and the evaluation
-// must report that one rather than both or none.
 let package = Package(
     name: "dependency",
     products: [

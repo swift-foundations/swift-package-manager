@@ -2,16 +2,7 @@ private import JSON
 public import SPM_Standard
 
 extension Package.Manager {
-    /// Evaluates `swift package dump-package` at a package directory.
-    ///
-    /// Reads only `name`, `toolsVersion`, and `dependencies`. Callers needing
-    /// products, targets, platforms, traits, the dependency-product back-fill,
-    /// or an honest source for mirror-substituted dependencies should use
-    /// ``evaluation(at:)`` instead.
-    ///
-    /// The SwiftPM invocation and JSON parsing are shared with
-    /// ``evaluation(at:)`` via ``dump(at:)``; this operation's observable
-    /// behaviour is unchanged by that sharing.
+
     public func manifest(at directory: Swift.String) throws(Error) -> Package.Manifest {
         let json = try dump(at: directory)
         do throws(JSON.Error) {

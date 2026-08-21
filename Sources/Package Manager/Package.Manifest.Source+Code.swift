@@ -1,6 +1,5 @@
 extension Package.Manifest.Source {
-    /// Replaces line and nested block comments with spaces, preserving strings,
-    /// newlines, and byte positions.
+
     public static func code(in source: Swift.String) -> Swift.String {
         var bytes = [Swift.UInt8](source.utf8)
         let slash = Swift.UInt8(ascii: "/" as Swift.Unicode.Scalar)

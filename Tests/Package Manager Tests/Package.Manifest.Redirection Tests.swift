@@ -99,8 +99,7 @@ extension Package.Manifest.Redirection.Test.`Edge Case` {
             dependency: "https://github.com/foo/swift-alpha.git",
             to: "/checkouts/swift-alpha"
         )
-        // The original manifest never carried the planned clause — the same
-        // shape a hand-edit or an earlier restore leaves behind.
+
         #expect(
             throws: Package.Manifest.Redirection.Error.composedClauseAbsent(
                 planned: rewrite.planned

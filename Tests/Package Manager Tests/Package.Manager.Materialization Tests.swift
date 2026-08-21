@@ -2,11 +2,7 @@ import Package_Manager
 import Testing
 
 extension Package.Manager {
-    /// Tests for ``Package/Manager/Materialized/source(of:at:scratch:)``.
-    ///
-    /// Pure value derivation — no filesystem, no SwiftPM invocation — so every
-    /// case is deterministic and portable. Paths here are the artificial
-    /// `/fixture/...` form; no machine directory appears.
+
     @Suite
     struct `Materialization Test` {
 
@@ -20,10 +16,7 @@ extension Package.Manager {
 
         @Test
         func `a managed checkout compiles from the scratch directory, not its location`() {
-            // The load-bearing case. Under an active mirror the reference
-            // location is a mutable worktree that routinely diverges from what
-            // was compiled, so returning it would be the exact error this
-            // operation exists to prevent.
+
             let dependency = Package.Resolution.Dependency(
                 reference: Self.reference(
                     "swift-paths",
@@ -38,7 +31,7 @@ extension Package.Manager {
                 .source(of: dependency, at: "/fixture/root")
 
             #expect(path == "/fixture/root/.build/checkouts/swift-paths")
-            // Emphatically NOT the reference location.
+
             #expect(path != dependency.reference.location)
         }
 
@@ -65,8 +58,7 @@ extension Package.Manager {
 
         @Test
         func `a filesystem dependency compiles from its recorded path`() {
-            // Used in place: no checkout intervenes, so the scratch directory
-            // is irrelevant and must not appear in the result.
+
             let dependency = Package.Resolution.Dependency(
                 reference: Self.reference(
                     "swift-css",
@@ -86,9 +78,7 @@ extension Package.Manager {
 
         @Test
         func `an edited dependency compiles from its working copy`() {
-            // The retired workflow still has live records, and its whole point
-            // is that the working copy is compiled rather than the checkout it
-            // displaced — so the superseded revision must not steer the result.
+
             let superseded = Package.Resolution.Dependency.Superseded(
                 reference: Self.reference(
                     "swift-parser-primitives",
@@ -116,8 +106,7 @@ extension Package.Manager {
 
             #expect(path == "/fixture/edited/swift-parser-primitives")
             #expect(path.contains("checkouts") == false)
-            // The displaced checkout's revision is still readable, and still
-            // does not describe what is being compiled.
+
             #expect(dependency.state.superseded?.checkout.revision == "aaa111")
             #expect(dependency.revision == nil)
         }

@@ -1,6 +1,5 @@
 extension Package.Manifest.Identity.Conflict {
-    /// Whether `name` is a root package manifest recognized by SwiftPM's
-    /// versioned-manifest convention.
+
     public static func isRootManifest(_ name: Swift.String) -> Swift.Bool {
         guard name.hasPrefix("Package"), name.hasSuffix(".swift") else { return false }
         let middle = name.dropFirst("Package".count).dropLast(".swift".count)
@@ -10,7 +9,6 @@ extension Package.Manifest.Identity.Conflict {
         return !version.isEmpty && version.allSatisfy { $0.isNumber || $0 == "." }
     }
 
-    /// URL entries declared by `.package(url: …)` clauses in one root manifest.
     public static func entries(
         in manifest: Swift.String,
         document: Swift.String
@@ -22,11 +20,6 @@ extension Package.Manifest.Identity.Conflict {
         }
     }
 
-    /// Distinct-location findings, sorted by identity and location.
-    ///
-    /// Two manifest locations for one identity are load-fatal. A manifest
-    /// location that only disagrees with `Package.resolved` is stale state:
-    /// re-resolution rewrites the pin, so callers warn without refusing.
     public static func findings(in entries: [Entry]) -> [Finding] {
         let grouped = Swift.Dictionary(grouping: entries, by: \.identity)
         return grouped.keys.sorted().compactMap { identity in
@@ -44,9 +37,6 @@ extension Package.Manifest.Identity.Conflict {
         }
     }
 
-    /// The canonical location SwiftPM compares for source-control identity.
-    /// Scheme and SCP-style user prefixes, trailing slashes, `.git`, and case
-    /// do not distinguish locations.
     public static func canonical(_ url: Swift.String) -> Swift.String {
         var value = url[...]
         while value.first?.isWhitespace == true { value = value.dropFirst() }

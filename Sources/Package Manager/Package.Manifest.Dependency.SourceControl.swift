@@ -1,5 +1,5 @@
 extension Package.Manifest.Dependency {
-    /// Typed source-control facts declared by one `.package(url: …)` call.
+
     public struct SourceControl: Swift.Sendable, Swift.Hashable {
         public let url: Swift.String
         public let branch: Swift.String?

@@ -1,5 +1,5 @@
 extension Package.Manifest.Dependency.SourceControl {
-    /// Source-control facts in one manifest, excluding commented declarations.
+
     public static func all(
         in source: Swift.String,
         document: Swift.String
